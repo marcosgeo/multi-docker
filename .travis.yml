@@ -1,0 +1,24 @@
+sudo: required
+services:
+    - docker
+
+before_install:
+    - docker build -t marcosgeo/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+    - docker run -e CI=true marcosgeo/react-test npm test
+
+after_success:
+    - docker build -t marcosgeo/multi-client ./client
+    - docker build -t marcosgeo/multi-nginx ./nginx
+    - docker build -t marcosgeo/multi-server ./server
+    - docker build -t marcosgeo/multi-worker ./worker
+
+    # Log in to the docker CLI
+    echo "DOCKER_TOKEN" | docker login -u "$DOCKER_ID" --password-stdin
+
+    # Take those image and push them to docker hub
+    - docker push marcosgeo/multi-client
+    - docker push marcosgeo/multi-nginx
+    - docker push marcosgeo/multi-server
+    - docker push marcosgeo/multi-worker
