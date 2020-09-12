@@ -24,3 +24,16 @@ after_success:
     - docker push marcosgeo/multi-nginx
     - docker push marcosgeo/multi-server
     - docker push marcosgeo/multi-worker
+
+deploy:
+    edge: true
+    provider: elasticbeanstalk
+    region: us-east-1
+    app: mult-docker
+    env: MultDocker-env
+    bucket_name: elasticbeanstalk-us-east-1-454276808754
+    bucket_path: docker-multi
+    on:
+        branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
